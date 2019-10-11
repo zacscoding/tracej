@@ -19,14 +19,15 @@ proxy:
   classes:
     - name: com/demo
       # ["equals", "startsWith", "endsWith", "contains", "regex"]
-      filter-type: equals
+      filtertype: equals
       # this key is valid if type is "regex"
-      patten:
+      regex:
       invoker: true
       methods:
         - name: "*"
           # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
-          filter-type:
+          filtertype:
+          regex:
           invoker: true
 
 ###########################################################################
