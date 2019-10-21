@@ -14,7 +14,7 @@ public class ProxyClassConfig {
     private String name;
     private FilterType filterType;
     private Pattern pattern;
-    private boolean isInvoker;
+    private boolean invoker;
 
     private List<ProxyMethodConfig> proxyMethods = new ArrayList<ProxyMethodConfig>();
 
@@ -32,6 +32,36 @@ public class ProxyClassConfig {
         proxyMethods.add(config);
     }
 
+    /**
+     * Returns matches or not given a class name.
+     */
+    public boolean matches(String className) {
+        if (className == null || className.isEmpty()) {
+            return false;
+        }
+
+        switch (filterType) {
+            case EQUALS:
+                return name.equals(className);
+            case STARTSWITH:
+                return invoker ? name.startsWith(className) : className.startsWith(name);
+            case ENDSWITH:
+                return invoker ? name.endsWith(className) : className.endsWith(name);
+            case CONTAINS:
+                return invoker ? name.contains(className) : className.contains(name);
+            case REGEX:
+                return pattern.matcher(className).matches();
+            case ALL:
+                // Not supported in class config
+                return false;
+            case UNKNOWN:
+                return false;
+        }
+
+        return false;
+    }
+
+    ///////////////////////////////////////
     // getters, setters
     public String getName() {
         return name;
@@ -58,11 +88,11 @@ public class ProxyClassConfig {
     }
 
     public boolean isInvoker() {
-        return isInvoker;
+        return invoker;
     }
 
     public void setInvoker(boolean invoker) {
-        isInvoker = invoker;
+        this.invoker = invoker;
     }
 
     public List<ProxyMethodConfig> getProxyMethods() {

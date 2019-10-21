@@ -1,6 +1,8 @@
 package com.github.zacscoding.tracej.agent.config;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,16 +42,44 @@ public class Config {
         DEFAULT_YAML_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Returns a {@link ProxyClassConfig} given class name
+     *
+     * @return {@link ProxyClassConfig} if matches given class name or null
+     */
+    public ProxyClassConfig getProxyClassConfig(String className) {
+        ProxyClassConfig config = null;
+
+        for (ProxyClassConfig classConfig : proxy.getProxyClasses()) {
+            if (classConfig.matches(className)) {
+                if (classConfig != null) {
+                    // WARNING
+                    continue;
+                }
+                config = classConfig;
+            }
+        }
+
+        return config;
+    }
+
+    /**
+     * Returns a boolean whether has error nor not
+     */
     public boolean hasError() {
         return hasError;
     }
 
-    public ProxyConfig getProxy() {
-        return proxy;
+    /**
+     * Returns a {@link LogConfig}
+     */
+    public LogConfig getLogConfig() {
+        return log;
     }
 
-    public LogConfig getLog() {
-        return log;
+    // for tests
+    ProxyConfig getProxy() {
+        return proxy;
     }
 
     ///////////////////////////////////////
@@ -125,7 +155,10 @@ public class Config {
 
         if (filterType == FilterType.REGEX) {
             if (regex.isEmpty()) {
-                throw new Exception("filter type is regex but invalid regex expression.");
+                throw new Exception(
+                        String.format("filter type is regex but invalid regex expression. class %s, regex %s."
+                                , name, regex)
+                );
             }
 
             config.setPattern(Pattern.compile(regex));

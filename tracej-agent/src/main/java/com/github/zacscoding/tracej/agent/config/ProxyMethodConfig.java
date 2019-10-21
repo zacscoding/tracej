@@ -17,6 +17,36 @@ public class ProxyMethodConfig {
     public ProxyMethodConfig() {
     }
 
+    /**
+     * Returns matches or not given a method name.
+     */
+    public boolean matches(String methodName) {
+        if (methodName == null || methodName.isEmpty()) {
+            return false;
+        }
+
+        switch (filterType) {
+            case EQUALS:
+                return name.equals(methodName);
+            case STARTSWITH:
+                return invoker ? name.startsWith(methodName) : methodName.startsWith(name);
+            case ENDSWITH:
+                return invoker ? name.endsWith(methodName) : methodName.endsWith(name);
+            case CONTAINS:
+                return invoker ? name.contains(methodName) : methodName.contains(name);
+            case REGEX:
+                return pattern.matcher(methodName).matches();
+            case ALL:
+                return true;
+            case UNKNOWN:
+                return false;
+        }
+
+        return false;
+    }
+
+    ///////////////////////////////////////
+    // getters, setters
     public String getName() {
         return name;
     }

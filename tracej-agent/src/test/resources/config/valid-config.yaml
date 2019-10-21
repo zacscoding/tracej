@@ -21,38 +21,38 @@ proxy:
       # ["equals", "startsWith", "endsWith", "contains", "regex"]
       filtertype: regex
       # this key is valid if type is "regex"
-      regex: "[A-Za-z]*"
+      pattern: "[A-Za-z]*"
       invoker: true
       methods:
         - name: "*"
           # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
           filtertype:
-          regex:
+          pattern:
           invoker: true
     - name: com/demo
       # ["equals", "startsWith", "endsWith", "contains", "regex"]
       filtertype: equals
       # this key is valid if type is "regex"
-      regex:
+      pattern:
       invoker: true
       methods:
         - name: "*"
           # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
           filtertype:
-          regex:
+          pattern:
           invoker: true
     - name: com/demo
-        # ["equals", "startsWith", "endsWith", "contains", "regex"]
-        filtertype: equals
-        # this key is valid if type is "regex"
-        regex:
-        invoker: true
-        methods:
-          - name: "*"
-            # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
-            filtertype:
-            regex:
-            invoker: true
+      # ["equals", "startsWith", "endsWith", "contains", "regex"]
+      filtertype: equals
+      # this key is valid if type is "regex"
+      pattern:
+      invoker: true
+      methods:
+        - name: "*"
+          # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
+          filtertype:
+          pattern:
+          invoker: true
 
 ###########################################################################
 # Configuration of logs

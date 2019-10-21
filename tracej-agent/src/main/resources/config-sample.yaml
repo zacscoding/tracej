@@ -21,13 +21,13 @@ proxy:
       # ["equals", "startsWith", "endsWith", "contains", "regex"]
       filtertype: equals
       # this key is valid if type is "regex"
-      regex:
+      pattern:
       invoker: true
       methods:
         - name: "*"
           # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
           filtertype:
-          regex:
+          pattern:
           invoker: true
 
 ###########################################################################

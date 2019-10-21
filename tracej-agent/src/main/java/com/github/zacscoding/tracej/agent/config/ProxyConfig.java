@@ -28,4 +28,8 @@ public class ProxyConfig {
             proxyClasses.add(config);
         }
     }
+
+    public List<ProxyClassConfig> getProxyClasses() {
+        return proxyClasses;
+    }
 }

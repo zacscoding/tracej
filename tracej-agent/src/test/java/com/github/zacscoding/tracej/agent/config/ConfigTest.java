@@ -1,6 +1,7 @@
 package com.github.zacscoding.tracej.agent.config;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -17,11 +18,18 @@ public class ConfigTest {
     private static final String CONFIG_PATH = "tracej.config.path";
 
     @Test
-    public void initializeConfig() {
+    public void parseConfig() {
+        // given
         File notExistFile = new File("src/test/resources/config/valid-config.yaml");
         System.setProperty(CONFIG_PATH, notExistFile.getAbsolutePath());
         Config.INSTANCE.reload();
         assertFalse(Config.INSTANCE.hasError());
+
+        // when
+        ProxyConfig proxyConfig = Config.INSTANCE.getProxy();
+        assertNotNull(proxyConfig);
+
+
     }
 
     @Test
