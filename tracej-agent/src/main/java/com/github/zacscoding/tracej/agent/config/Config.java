@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.github.zacscoding.tracej.agent.LOGGER;
 
 /**
  * Agent configuration.
@@ -52,8 +53,8 @@ public class Config {
 
         for (ProxyClassConfig classConfig : proxy.getProxyClasses()) {
             if (classConfig.matches(className)) {
-                if (classConfig != null) {
-                    // WARNING
+                if (config != null) {
+                    LOGGER.error("found multiple matched proxy class config. class name : " + className);
                     continue;
                 }
                 config = classConfig;
@@ -68,6 +69,13 @@ public class Config {
      */
     public boolean hasError() {
         return hasError;
+    }
+
+    /**
+     * Settings error to true
+     */
+    public void setError(boolean hasError) {
+        this.hasError = hasError;
     }
 
     /**

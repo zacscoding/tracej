@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 /**
- *
  * @GitHub : https://github.com/zacscoding
  */
 public class ProxyMethodConfigTest {
@@ -25,7 +24,7 @@ public class ProxyMethodConfigTest {
         assertTrue(config.matches("method1"));
         assertTrue(config.matches("method12"));
         assertTrue(config.matches("method123"));
-        assertTrue(config.matches("method321"));
+        assertFalse(config.matches("method321"));
 
         // given
         config.setFilterType(FilterType.ALL);
@@ -36,10 +35,11 @@ public class ProxyMethodConfigTest {
 
         // given
         config.setFilterType(FilterType.REGEX);
-        config.setPattern(Pattern.compile("[a-z][a-z0-9]$"));
+        config.setPattern(Pattern.compile("^[a-zA-Z0-9_]*$"));
 
         // when then
-        assertTrue(config.matches("method22"));
+        assertTrue(config.matches("method2"));
+        assertTrue(config.matches("method2_"));
         assertFalse(config.matches("method$$"));
     }
 }
