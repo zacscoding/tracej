@@ -9,12 +9,12 @@ import com.github.zacscoding.tracej.agent.LOGGER;
  *
  * @GitHub : https://github.com/zacscoding
  */
-public class TransactionCollector {
+public class TransactionStack {
 
     /**
      * Start to trace method with given id
      */
-    public static void startTransaction(String id) {
+    public static void pushTransaction(String id) {
         TransactionContext ctx = TransactionContextManager.getOrCreateContext();
 
         if (ctx == null) {
@@ -57,7 +57,7 @@ public class TransactionCollector {
     /**
      * Stop to trace method
      */
-    public static void endTransaction() {
+    public static void popTransaction() {
         TransactionContext ctx = TransactionContextManager.getOrCreateContext();
 
         if (ctx == null) {
@@ -76,6 +76,7 @@ public class TransactionCollector {
     }
 
     private static void displayTracedCallStack(TransactionContext ctx) {
+        // TODO : depth prefix
         synchronized (System.out) {
             List<MethodContext> methods = ctx.getMethods();
             StringBuilder sb = new StringBuilder();
@@ -88,7 +89,7 @@ public class TransactionCollector {
                 String depthPrefix = "";
 
                 while (depth-- > 0) {
-                    depthPrefix += "|  ";
+                    depthPrefix += "| ";
                 }
 
                 sb.append(depthPrefix)
@@ -103,7 +104,7 @@ public class TransactionCollector {
                 List<String> params = methodCtx.getParams();
 
                 /*if (i == 0 && !params.isEmpty()) {
-                    depthPrefix += "|  ";
+                    depthPrefix += "|";
                 }*/
 
                 for (int j = 0; j < params.size(); j++) {

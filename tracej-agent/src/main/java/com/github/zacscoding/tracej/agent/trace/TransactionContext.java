@@ -83,4 +83,9 @@ public class TransactionContext {
     public boolean hasTrace() {
         return !callStack.isEmpty();
     }
+
+    // for tests
+    MethodContext peek() {
+        return callStack.isEmpty() ? null : callStack.peek();
+    }
 }
