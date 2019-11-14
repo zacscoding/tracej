@@ -69,7 +69,7 @@
   </dependencies>
 
   <build>
-    <finalName>tracer-agent</finalName>
+    <finalName>tracej-agent</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -118,6 +118,10 @@
                 <relocation>
                   <pattern>com.google</pattern>
                   <shadedPattern>${deps}.com.google</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.fasterxml</pattern>
+                  <shadedPattern>${deps}.com.fasterxml</shadedPattern>
                 </relocation>
               </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>

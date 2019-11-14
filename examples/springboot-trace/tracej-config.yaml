@@ -1,0 +1,40 @@
+###########################################################################
+# Configuration of proxy
+#
+# Suppose that name is "com/demo" and filter-type is "startsWith",
+# invoker is false in "proxy.classes" section.
+#
+# Then will check whether {loaded classes name}.startsWith("com/demo")
+# is true or false.
+#
+# example1) loaded class name = "com/demo2/MyClass"
+#   => "com/demo2/MyClass".startsWith("com/demo") == true
+#   => will trace i.e change class file.
+#
+# example2) loaded class name = "net/demo/YourClass"
+#   => "net/demo/YourClass".startsWith("com/demo") == false
+#   => skip to trace.
+###########################################################################
+proxy:
+  classes:
+    - name: examples/boot
+      # ["equals", "startsWith", "endsWith", "contains", "regex"]
+      filtertype: startWith
+      # this key is valid if type is "regex"
+      pattern:
+      invoker: false
+      methods:
+        - name: "*"
+          # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
+          filtertype:
+          pattern:
+          invoker: true
+
+###########################################################################
+# Configuration of logs
+###########################################################################
+log:
+  console:
+    enable: true
+  file:
+    path: /home/zaccoding/trace-demo

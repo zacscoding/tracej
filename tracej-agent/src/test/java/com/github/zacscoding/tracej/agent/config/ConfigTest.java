@@ -28,8 +28,6 @@ public class ConfigTest {
         // when
         ProxyConfig proxyConfig = Config.INSTANCE.getProxy();
         assertNotNull(proxyConfig);
-
-
     }
 
     @Test
