@@ -5,22 +5,105 @@ package com.github.zacscoding.tracej.agent.config;
  */
 public class LogConfig {
 
-    private boolean enableConsole;
-    private String filePath;
+    private DumpConfig dumpConfig;
+    private ConsoleConfig consoleConfig;
+    private FileConfig fileConfig;
 
-    public boolean isEnableConsole() {
-        return enableConsole;
+    // getters, setters
+    public DumpConfig getDumpConfig() {
+        return dumpConfig;
     }
 
-    public void setEnableConsole(boolean enableConsole) {
-        this.enableConsole = enableConsole;
+    public void setDumpConfig(DumpConfig dumpConfig) {
+        this.dumpConfig = dumpConfig;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public ConsoleConfig getConsoleConfig() {
+        return consoleConfig;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setConsoleConfig(ConsoleConfig consoleConfig) {
+        this.consoleConfig = consoleConfig;
+    }
+
+    public FileConfig getFileConfig() {
+        return fileConfig;
+    }
+
+    public void setFileConfig(FileConfig fileConfig) {
+        this.fileConfig = fileConfig;
+    }
+
+    /**
+     * Dump config
+     */
+    public static class DumpConfig {
+
+        private boolean enable;
+        private boolean error;
+        private String path;
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+
+        public boolean isError() {
+            return error;
+        }
+
+        public void setError(boolean error) {
+            this.error = error;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+    }
+
+    /**
+     * log.console config
+     */
+    public static class ConsoleConfig {
+        private boolean enable;
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+    }
+
+    /**
+     * log.file config
+     */
+    public static class FileConfig {
+        private boolean enable;
+        private String path;
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
     }
 }

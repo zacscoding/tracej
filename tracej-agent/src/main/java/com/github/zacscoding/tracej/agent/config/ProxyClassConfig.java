@@ -62,10 +62,9 @@ public class ProxyClassConfig {
     }
 
     public ProxyMethodConfig getProxyMethodConfig(String methodName) {
-        ProxyMethodConfig config = null;
-
         for (ProxyMethodConfig methodConfig : proxyMethods) {
             if (methodConfig.matches(methodName)) {
+                return methodConfig;
             }
         }
 

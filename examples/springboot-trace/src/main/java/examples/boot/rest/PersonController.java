@@ -30,7 +30,7 @@ public class PersonController {
     public ResponseEntity getPerson(@PathVariable("id") Long id) {
         Optional<Person> personOptional = personService.getPersonById(id);
 
-        if (personOptional.isPresent()) {
+        if (!personOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 

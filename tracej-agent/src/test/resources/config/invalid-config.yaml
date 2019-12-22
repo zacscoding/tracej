@@ -33,7 +33,12 @@ proxy:
 # Configuration of logs
 ###########################################################################
 log:
+  # dump modified class file
+  dump:
+    enable: false
+    path:
   console:
     enable: true
   file:
-    path: /home/zaccoding/trace-demo
+    enable: false
+    path: /home/zaccoding/trace-demo.log

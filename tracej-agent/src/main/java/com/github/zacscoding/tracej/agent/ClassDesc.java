@@ -12,7 +12,7 @@ public class ClassDesc {
     protected String signature;
     protected String superName;
     protected String[] interfaces;
-    protected String anotation;
+    protected String annotation;
     protected Class classBeingRedefined;
     protected boolean isMapImpl;
 

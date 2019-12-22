@@ -54,6 +54,29 @@ public class TransactionStack {
         ctx.appendReturnValue(value, System.currentTimeMillis());
     }
 
+    public static void appendException(Throwable throwable) {
+        TransactionContext ctx = TransactionContextManager.getOrCreateContext();
+
+        if (ctx == null) {
+            LOGGER.error("appendException(Throwable) is called although not exit tx ctx");
+            return;
+        }
+
+        long endTime = System.currentTimeMillis();
+
+        if (throwable == null) {
+            ctx.appendReturnValue("Unknown Exception", endTime);
+            return;
+        }
+
+        final StringBuilder result = new StringBuilder("Exception(")
+                .append(throwable.getClass().getSimpleName())
+                .append(") : ")
+                .append(throwable.getMessage() == null ? "null" : throwable.getMessage());
+
+        ctx.appendReturnValue(result.toString(), endTime);
+    }
+
     /**
      * Stop to trace method
      */
@@ -71,6 +94,7 @@ public class TransactionStack {
             return;
         }
 
+        // TODO : flush transaction stack
         // TEMP for dev
         displayTracedCallStack(ctx);
     }
@@ -79,7 +103,7 @@ public class TransactionStack {
         // TODO : depth prefix
         synchronized (System.out) {
             List<MethodContext> methods = ctx.getMethods();
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("\n>> Trace method call stack\n");
 
             for (int i = 0; i < methods.size(); i++) {
                 MethodContext methodCtx = methods.get(i);
@@ -97,7 +121,7 @@ public class TransactionStack {
                   .append(methodCtx.getId())
                   .append('[')
                   .append(methodCtx.getEndTime() - methodCtx.getStartTime())
-                  .append("ms] : ")
+                  .append(" ms] : ")
                   .append(methodCtx.getReturnValue())
                   .append('\n');
 
@@ -116,6 +140,9 @@ public class TransactionStack {
                       .append('\n');
                 }
             }
+
+            sb.append(
+                    "============================================================================================");
 
             System.out.println(sb);
         }

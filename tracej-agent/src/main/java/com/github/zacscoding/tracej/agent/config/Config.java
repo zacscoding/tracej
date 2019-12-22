@@ -1,8 +1,6 @@
 package com.github.zacscoding.tracej.agent.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,6 +10,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.zacscoding.tracej.agent.LOGGER;
+import com.github.zacscoding.tracej.agent.config.LogConfig.ConsoleConfig;
+import com.github.zacscoding.tracej.agent.config.LogConfig.DumpConfig;
+import com.github.zacscoding.tracej.agent.config.LogConfig.FileConfig;
 
 /**
  * Agent configuration.
@@ -22,26 +23,16 @@ public class Config {
 
     public static final Config INSTANCE = new Config();
 
-    private static final YAMLMapper DEFAULT_YAML_MAPPER;
     // config path key in vm args
     private static final String CONFIG_PATH = "tracej.config.path";
+
+    private YAMLMapper yamlMapper;
 
     private boolean initialized;
     private boolean hasError;
 
     private ProxyConfig proxy;
     private LogConfig log;
-
-    static {
-        YAMLFactory yamlFactory = new YAMLFactory()
-                .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
-                .configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
-                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-                .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true);
-
-        DEFAULT_YAML_MAPPER = new YAMLMapper(yamlFactory);
-        DEFAULT_YAML_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
 
     /**
      * Returns a {@link ProxyClassConfig} given class name
@@ -101,25 +92,40 @@ public class Config {
             return;
         }
 
+        YAMLFactory yamlFactory = new YAMLFactory()
+                .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
+                .configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
+                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+                .configure(YAMLGenerator.Feature.INDENT_ARRAYS, true);
+
+        yamlMapper = new YAMLMapper(yamlFactory);
+        yamlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         try {
             String configPath = System.getProperty(CONFIG_PATH);
+
             if (configPath == null) {
                 throw new Exception("empty config path in args about key : " + CONFIG_PATH);
             }
+
             File configFile = new File(configPath);
+
             if (!configFile.exists()) {
                 throw new Exception("cannot find config file. path : " + configPath);
             }
+
             parseConfig(configFile);
             initialized = true;
         } catch (Exception e) {
-            System.err.println("failed to initialize config. reason : " + e.getMessage());
+            System.err.println("failed to initialize config.");
+            e.printStackTrace(System.err);
+            initialized = true;
             hasError = true;
         }
     }
 
     private void parseConfig(File configFile) throws Exception {
-        JsonNode rootNode = DEFAULT_YAML_MAPPER.readTree(configFile);
+        JsonNode rootNode = yamlMapper.readTree(configFile);
 
         // parse proxy section
         if (!rootNode.has("proxy")) {
@@ -227,14 +233,54 @@ public class Config {
     private LogConfig parseLogConfig(JsonNode logNode) {
         final LogConfig config = new LogConfig();
 
-        final JsonNode enableNode = findNode(logNode, new String[] { "console", "enable" });
-        if (enableNode != null) {
-            config.setEnableConsole(enableNode.asBoolean());
+        config.setDumpConfig(new DumpConfig());
+        config.setConsoleConfig(new ConsoleConfig());
+        config.setFileConfig(new FileConfig());
+
+        final JsonNode dumpNode = findNode(logNode, new String[] { "dump" });
+        if (dumpNode != null) {
+            boolean enable = false;
+
+            if (dumpNode.has("enable")) {
+                enable = dumpNode.get("enable").asBoolean();
+            }
+
+            config.getDumpConfig().setEnable(enable);
+
+            if (enable) {
+                config.getDumpConfig().setPath(dumpNode.get("path").asText());
+                try {
+                    setUpDumpClassDirectory(config.getDumpConfig().getPath());
+                } catch (Exception e) {
+                    config.getDumpConfig().setError(true);
+                }
+            }
         }
 
-        final JsonNode pathNode = findNode(logNode, new String[] { "file", "path" });
-        if (pathNode != null) {
-            config.setFilePath(pathNode.asText());
+        final JsonNode consoleNode = findNode(logNode, new String[] { "console" });
+        if (consoleNode != null) {
+            boolean enable = false;
+
+            if (consoleNode.has("enable")) {
+                enable = consoleNode.get("enable").asBoolean();
+            }
+
+            config.getConsoleConfig().setEnable(enable);
+        }
+
+        final JsonNode fileNode = findNode(logNode, new String[] { "file" });
+        if (fileNode != null) {
+            boolean enable = false;
+
+            if (fileNode.has("enable")) {
+                enable = fileNode.get("enable").asBoolean();
+            }
+
+            config.getFileConfig().setEnable(enable);
+
+            if (enable) {
+                config.getFileConfig().setPath(fileNode.get("path").asText());
+            }
         }
 
         return config;
@@ -263,10 +309,58 @@ public class Config {
         return currentNode;
     }
 
+    private void setUpDumpClassDirectory(String path) {
+        try {
+            File rootDir = new File(path);
+            if (!rootDir.canWrite()) {
+                rootDir.mkdirs();
+            }
+
+            File[] prevs = rootDir.listFiles();
+            for (File file : prevs) {
+                if (".idea".equals(file.getName())) {
+                    continue;
+                }
+
+                if (file.isFile()) {
+                    file.delete();
+                } else {
+                    deleteAll(file);
+                }
+            }
+
+            if (!rootDir.canWrite()) {
+                rootDir.mkdirs();
+            }
+            if (!rootDir.canWrite()) {
+                hasError = true;
+            }
+        } catch (Exception e) {
+            hasError = true;
+        }
+    }
+
+    private void deleteAll(File dir) {
+        if (dir == null) {
+            return;
+        }
+
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (!file.isFile()) {
+                deleteAll(file);
+            }
+
+            file.delete();
+        }
+        dir.delete();
+    }
+
     // for tests
-    void reload() {
+    void reload(String configPath) {
         hasError = false;
         initialized = false;
+        System.setProperty(CONFIG_PATH, configPath);
         initialize();
     }
 }

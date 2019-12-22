@@ -36,6 +36,10 @@ public class ProxyClassVisitor extends ClassVisitor implements Opcodes {
             return mv;
         }
 
+        if("<clinit>".equals(name)) {
+            return mv;
+        }
+
         ProxyMethodConfig methodConfig = classConfig.getProxyMethodConfig(name);
 
         if (methodConfig == null) {

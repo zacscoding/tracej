@@ -17,9 +17,34 @@
 ###########################################################################
 proxy:
   classes:
-    - name: examples/boot
+    - name: examples/boot/rest
       # ["equals", "startsWith", "endsWith", "contains", "regex"]
-      filtertype: startWith
+      filtertype: startsWith
+      # this key is valid if type is "regex"
+      pattern:
+      invoker: false
+      methods:
+        - name: "*"
+          # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
+          filtertype:
+          pattern:
+          invoker: true
+    - name: examples/boot/service
+      # ["equals", "startsWith", "endsWith", "contains", "regex"]
+      filtertype: startsWith
+      # this key is valid if type is "regex"
+      pattern:
+      invoker: false
+      methods:
+        - name: "*"
+          # ["equals", "starts_with", "ends_with", "contains", "regex", "all"]
+          filtertype:
+          pattern:
+          invoker: true
+
+    - name: examples/boot/repository
+      # ["equals", "startsWith", "endsWith", "contains", "regex"]
+      filtertype: startsWith
       # this key is valid if type is "regex"
       pattern:
       invoker: false
@@ -34,7 +59,12 @@ proxy:
 # Configuration of logs
 ###########################################################################
 log:
+  # dump modified class file
+  dump:
+    enable: false
+    path: /home/zaccoding/tracej-dump
   console:
     enable: true
   file:
-    path: /home/zaccoding/trace-demo
+    enable: false
+    path:

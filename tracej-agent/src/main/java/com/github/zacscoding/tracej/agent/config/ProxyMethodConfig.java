@@ -1,6 +1,5 @@
 package com.github.zacscoding.tracej.agent.config;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -84,12 +83,12 @@ public class ProxyMethodConfig {
         if (this == o) { return true; }
         if (!(o instanceof ProxyMethodConfig)) { return false; }
         final ProxyMethodConfig that = (ProxyMethodConfig) o;
-        return Objects.equals(getName(), that.getName());
+        return name.equals(that.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName());
+        return name.hashCode();
     }
 
     @Override

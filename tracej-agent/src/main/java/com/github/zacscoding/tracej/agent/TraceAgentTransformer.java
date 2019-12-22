@@ -12,7 +12,9 @@ import org.objectweb.asm.Opcodes;
 
 import com.github.zacscoding.tracej.agent.asm.ProxyClassVisitor;
 import com.github.zacscoding.tracej.agent.config.Config;
+import com.github.zacscoding.tracej.agent.config.LogConfig.DumpConfig;
 import com.github.zacscoding.tracej.agent.config.ProxyClassConfig;
+import com.github.zacscoding.tracej.agent.util.DumpUtil;
 import com.github.zacscoding.tracej.agent.util.OpcodesUtil;
 
 /**
@@ -48,7 +50,7 @@ public class TraceAgentTransformer implements ClassFileTransformer {
 
                 @Override
                 public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                    classDesc.anotation += desc;
+                    classDesc.annotation += desc;
                     return super.visitAnnotation(desc, visible);
                 }
             }, 0);
@@ -64,9 +66,18 @@ public class TraceAgentTransformer implements ClassFileTransformer {
                 System.err.println("## find target class : " + className);
                 ClassWriter cw = new ClassWriter(classReader,
                                                  ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(
-                        new ProxyClassVisitor(cw, className, classConfig), ClassReader.EXPAND_FRAMES);
-                return cw.toByteArray();
+                classReader.accept(new ProxyClassVisitor(cw, className, classConfig),
+                                   ClassReader.EXPAND_FRAMES);
+
+                byte[] bytes = cw.toByteArray();
+
+                // dump class file
+                final DumpConfig dumpConfig = Config.INSTANCE.getLogConfig().getDumpConfig();
+                if (dumpConfig.isEnable() && !dumpConfig.isError()) {
+                    DumpUtil.writeByteCode(dumpConfig.getPath(), bytes, classDesc.name);
+                }
+
+                return bytes;
             }
         } catch (Throwable t) {
             LOGGER.error("failed to transform", t);

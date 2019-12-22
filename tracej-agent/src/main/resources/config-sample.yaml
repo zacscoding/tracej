@@ -34,7 +34,12 @@ proxy:
 # Configuration of logs
 ###########################################################################
 log:
+  # dump modified classes
+  dump:
+    enable: true
+    path: D:\tracej\classes
   console:
     enable: true
   file:
-    path: /home/zaccoding/trace-demo
+    enable: false
+    path: /home/zaccoding/trace-demo.log

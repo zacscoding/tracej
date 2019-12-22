@@ -15,32 +15,28 @@ import org.junit.Test;
  */
 public class ConfigTest {
 
-    private static final String CONFIG_PATH = "tracej.config.path";
-
     @Test
     public void parseConfig() {
-        // given
-        File notExistFile = new File("src/test/resources/config/valid-config.yaml");
-        System.setProperty(CONFIG_PATH, notExistFile.getAbsolutePath());
-        Config.INSTANCE.reload();
+        File configFile = new File("src/test/resources/config/valid-config.yaml");
+        Config.INSTANCE.reload(configFile.getAbsolutePath());
         assertFalse(Config.INSTANCE.hasError());
 
-        // when
         ProxyConfig proxyConfig = Config.INSTANCE.getProxy();
         assertNotNull(proxyConfig);
+
+        // TODO : add assertion of config values
     }
 
     @Test
     public void initializeConfigErrorWhenNoArgs() {
-        Config.INSTANCE.reload();
+        Config.INSTANCE.reload("");
         assertTrue(Config.INSTANCE.hasError());
     }
 
     @Test
     public void initializeConfigErrorWhenNoFile() {
         File notExistFile = new File("src/test/resources/config/not_exist.yaml");
-        System.setProperty(CONFIG_PATH, notExistFile.getAbsolutePath());
-        Config.INSTANCE.reload();
+        Config.INSTANCE.reload(notExistFile.getAbsolutePath());
         assertTrue(Config.INSTANCE.hasError());
     }
 }
