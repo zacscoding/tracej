@@ -34,6 +34,8 @@ proxy:
 # Configuration of logs
 ###########################################################################
 log:
+  # display stack trace from caller
+  traceCallStack: true
   # dump modified classes
   dump:
     enable: true

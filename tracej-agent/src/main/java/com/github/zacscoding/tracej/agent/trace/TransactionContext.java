@@ -14,6 +14,12 @@ import com.github.zacscoding.tracej.agent.LOGGER;
  */
 public class TransactionContext {
 
+    // caller
+    private String caller;
+
+    // caller of stack traces in current thread e.g
+    private String callerStackTrace;
+
     // called method
     private List<MethodContext> methods = new LinkedList<MethodContext>();
 
@@ -25,6 +31,41 @@ public class TransactionContext {
      */
     public List<MethodContext> getMethods() {
         return new ArrayList<MethodContext>(methods);
+    }
+
+    /**
+     * Returns depth of stacks
+     */
+    public int getDepth() {
+        return callStack.size();
+    }
+
+    /**
+     * Returns a caller of this transaction
+     */
+    public String getCaller() {
+        return caller;
+    }
+
+    /**
+     * Settings a this transaction's caller
+     */
+    public void setCaller(String caller) {
+        this.caller = caller;
+    }
+
+    /**
+     * Returns stack trace json array string from caller
+     */
+    public String getCallerStackTrace() {
+        return callerStackTrace;
+    }
+
+    /**
+     * Setting a stack trace json array string
+     */
+    public void setCallerStackTrace(String callerStackTrace) {
+        this.callerStackTrace = callerStackTrace;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.github.zacscoding.tracej.agent.trace;
 import java.util.List;
 
 import com.github.zacscoding.tracej.agent.LOGGER;
+import com.github.zacscoding.tracej.agent.config.Config;
 
 /**
  * Collector of traced transactions
@@ -20,6 +21,25 @@ public class TransactionStack {
         if (ctx == null) {
             LOGGER.error("Cannot create a TransactionContext after called getOrCreateContext()");
             return;
+        }
+
+        if (ctx.getDepth() == 0) {
+            final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            // first elt is a java.lang.Thread.getStackTrace
+            // second elt is com.github.zacscoding.tracej.agent.trace.TransactionStack.pushTransaction
+            ctx.setCaller(stackTrace[3].toString());
+
+            if (Config.INSTANCE.getLogConfig().isTraceCallStack()) {
+                StringBuilder jsonValue = new StringBuilder("[\"").append(stackTrace[3]).append('\"');
+
+                for (int i = 4; i < stackTrace.length; i++) {
+                    jsonValue.append(",\"")
+                             .append(stackTrace[i].toString())
+                             .append('\"');
+                }
+
+                ctx.setCallerStackTrace(jsonValue.append(']').toString());
+            }
         }
 
         MethodContext methodCtx = new MethodContext(id, System.currentTimeMillis());
@@ -103,7 +123,15 @@ public class TransactionStack {
         // TODO : depth prefix
         synchronized (System.out) {
             List<MethodContext> methods = ctx.getMethods();
-            StringBuilder sb = new StringBuilder("\n>> Trace method call stack\n");
+            StringBuilder sb = new StringBuilder("\n>> Trace method call stack from : ")
+                    .append(ctx.getCaller())
+                    .append('\n');
+
+            if (Config.INSTANCE.getLogConfig().isTraceCallStack()) {
+                sb.append("stack trace : ")
+                  .append(ctx.getCallerStackTrace())
+                  .append('\n');
+            }
 
             for (int i = 0; i < methods.size(); i++) {
                 MethodContext methodCtx = methods.get(i);
@@ -133,7 +161,7 @@ public class TransactionStack {
 
                 for (int j = 0; j < params.size(); j++) {
                     sb.append(depthPrefix)
-                      .append(" -- ")
+                      .append(" -- arg")
                       .append(j + 1)
                       .append(" : ")
                       .append(params.get(j))
@@ -141,9 +169,7 @@ public class TransactionStack {
                 }
             }
 
-            sb.append(
-                    "============================================================================================");
-
+            sb.append("\n");
             System.out.println(sb);
         }
     }

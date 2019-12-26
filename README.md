@@ -7,12 +7,11 @@ this agent help u debug ur java application without modifying source code.
 > example of result   
 
 ```aidl
->> Trace method call stack
-+--examples/boot/rest/PersonController::getPerson(Ljava/lang/Long;)Lorg/springframework/http/ResponseEntity;[112 ms] : <200 OK OK,Person(id=1, name=Hiva1, age=15, hobbies=[book]),{}>
- -- 1 : 1
-| +--examples/boot/service/PersonService::getPersonById(Ljava/lang/Long;)Ljava/util/Optional;[101 ms] : Optional[Person(id=1, name=Hiva1, age=15, hobbies=[book])]
-|  -- 1 : 1
-============================================================================================
+>> Trace method call stack from : sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
++--e.b.r.PersonController::getPerson(Ljava/lang/Long;)Lorg/springframework/http/ResponseEntity;[119 ms] : <200 OK OK,Person(id=1, name=Hiva1, age=15, hobbies=[]),{}>
+ -- arg1 : 1
+| +--e.b.s.PersonService::getPersonById(Ljava/lang/Long;)Ljava/util/Optional;[108 ms] : Optional[Person(id=1, name=Hiva1, age=15, hobbies=[])]
+|  -- arg1 : 1
 ```  
 
 ## Getting started  
@@ -62,6 +61,8 @@ proxy:
 # Configuration of logs
 ###########################################################################
 log:
+  # display stack trace from caller
+  traceCallStack: true
   # dump modified classes
   dump:
     enable: true

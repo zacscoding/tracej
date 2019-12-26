@@ -237,6 +237,13 @@ public class Config {
         config.setConsoleConfig(new ConsoleConfig());
         config.setFileConfig(new FileConfig());
 
+        // -- trace call stack
+        final JsonNode callStackNode = findNode(logNode, new String[] { "traceCallStack" });
+        if (callStackNode != null) {
+            config.setTraceCallStack(callStackNode.asBoolean());
+        }
+
+        // -- dump config
         final JsonNode dumpNode = findNode(logNode, new String[] { "dump" });
         if (dumpNode != null) {
             boolean enable = false;
@@ -257,6 +264,7 @@ public class Config {
             }
         }
 
+        // -- console config
         final JsonNode consoleNode = findNode(logNode, new String[] { "console" });
         if (consoleNode != null) {
             boolean enable = false;
@@ -268,6 +276,7 @@ public class Config {
             config.getConsoleConfig().setEnable(enable);
         }
 
+        // -- file config
         final JsonNode fileNode = findNode(logNode, new String[] { "file" });
         if (fileNode != null) {
             boolean enable = false;

@@ -5,11 +5,20 @@ package com.github.zacscoding.tracej.agent.config;
  */
 public class LogConfig {
 
+    private boolean traceCallStack;
     private DumpConfig dumpConfig;
     private ConsoleConfig consoleConfig;
     private FileConfig fileConfig;
 
     // getters, setters
+    public boolean isTraceCallStack() {
+        return traceCallStack;
+    }
+
+    public void setTraceCallStack(boolean traceCallStack) {
+        this.traceCallStack = traceCallStack;
+    }
+
     public DumpConfig getDumpConfig() {
         return dumpConfig;
     }

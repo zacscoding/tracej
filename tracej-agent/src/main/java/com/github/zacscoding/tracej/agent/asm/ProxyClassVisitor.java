@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 
 import com.github.zacscoding.tracej.agent.config.ProxyClassConfig;
 import com.github.zacscoding.tracej.agent.config.ProxyMethodConfig;
+import com.github.zacscoding.tracej.agent.util.StringUtil;
 
 /**
  * Proxy class visitor
@@ -36,7 +37,7 @@ public class ProxyClassVisitor extends ClassVisitor implements Opcodes {
             return mv;
         }
 
-        if("<clinit>".equals(name)) {
+        if ("<clinit>".equals(name)) {
             return mv;
         }
 
@@ -53,9 +54,7 @@ public class ProxyClassVisitor extends ClassVisitor implements Opcodes {
      * Returns a method's unique id "{className}::{methodName}{methodDesc}"
      */
     private String getMethodId(String className, String methodName, String methodDesc) {
-        int len = className.length() + methodName.length() + methodDesc.length() + 2;
-        return new StringBuilder(len)
-                .append(className).append("::").append(methodName).append(methodDesc)
-                .toString();
+        String trimClassName = StringUtil.trimClassName(className);
+        return trimClassName + "::" + methodName + methodDesc;
     }
 }
